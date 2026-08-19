@@ -1,0 +1,23 @@
+[
+    {
+        "nome": "Admin",
+        "login": "admin",
+        "senha": "$2y$10$bQg2l.UsN395HYIvgMy9PumZE0knkAyziYgPEo8iqpsWoP.e6zafq",
+        "ativo": true,
+        "id": 1
+    },
+    {
+        "nome": "Matheus Beltrão",
+        "login": "beltrao",
+        "senha": "$2y$10$bsNrEYZFuYX8YcbugorckeNiZdeXWHi\/AiJ4QffhbXuVENzMHN.Bu",
+        "ativo": true,
+        "id": 2
+    },
+    {
+        "nome": "adonai",
+        "login": "adonai_",
+        "senha": "$2y$10$2uFI.88ioCysocnve0Tqre3P6dJpgpGhCczxJfrUYOwu.kDjBtnd2",
+        "ativo": true,
+        "id": 3
+    }
+]

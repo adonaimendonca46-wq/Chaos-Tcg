@@ -1,0 +1,75 @@
+[
+    {
+        "nome": "Caixa de treinador avançado",
+        "preco": 266.9,
+        "categoria": "Coleção de Treinador",
+        "imagem": "data\/1781892577_7015-removebg-preview.png",
+        "descricao": "Produto em Português. Contém: 20 pacotes de booster, 1 carta promocional com arte expandida, 6 Dados Marcadores de Dano ,1 Dado moeda,65 Shields temáticos, Marcadores de condição, 1 moeda, 1 carta-código para o Pokémos Live",
+        "estoque": 1,
+        "id": 1
+    },
+    {
+        "id": 2,
+        "nome": "(ING) Coleção Treinador Avançado - Sol e Lua - Luz Proibida",
+        "preco": 9500,
+        "categoria": "Coleção de Treinador",
+        "imagem": "data\/1759338448_3873-removebg-preview.png",
+        "descricao": "Produto versão EUA (inglês). Contém: 8 Pacotes de booster, 45 cartas de energia;, 65 sleeves para cartas, 6 dados para usar como contadores de dano;, 1 dado para jogada de moeda válido para competições;, 2 marcadores de condição em acrílico;, 1 caixa de colecionador para guardar tudo com quatro divisores;, 1 guia para jogadores;, 1 carta codificada para o Pokémon Estampas Ilustradas Live."
+    },
+    {
+        "id": 3,
+        "nome": "(ING) Coleção Treinador Avançado - Megaevolução 2 - Fogo Fantasmagórico - Pokémon Center",
+        "preco": 2800,
+        "categoria": "Coleção de Treinador",
+        "imagem": "data\/1772729150_9107-removebg-preview.png",
+        "descricao": "11 boosters de Pokémon TCG, 1 carta promocional holográfica full-art com o logo da Pokémon Center, 1 carta promocional holográfica full-art, 65 protetores de carta,45 cartas de Energia,Guia do jogador da coleção, 6 dados de contadores de dano, 1 dado de moeda válido em torneios, 2 marcadores de condição plásticos, 1 caixa de colecionador com 4 divisórias, 1 código para o Pokémon TCG Live"
+    },
+    {
+        "id": 4,
+        "nome": "Booster Avulso Pokémon - Mega Evolução: Caos Ascendente",
+        "preco": 7.82,
+        "categoria": "Boosters Avulsos",
+        "imagem": "data\/booster_caos_ascendente.png",
+        "descricao": "Pacote individual (booster) da expansão Mega Evolução: Caos Ascendente. Contém 6 cartas de jogo adicionais, com chance de raridades e ilustrações especiais dessa edição."
+    },
+    {
+        "id": 5,
+        "nome": "Booster Avulso Pokémon - Mega Evolução",
+        "preco": 8.9,
+        "categoria": "Boosters Avulsos",
+        "imagem": "data\/booster_megaevolucao.png",
+        "descricao": "Pacote individual (booster) da expansão Mega Evolução. Contém 6 cartas de jogo adicionais, com chance de raridades e ilustrações especiais dessa edição."
+    },
+    {
+        "id": 6,
+        "nome": "Booster Avulso Pokémon - Estampas Ilustradas: Evoluções Prismáticas",
+        "preco": 12.18,
+        "categoria": "Boosters Avulsos",
+        "imagem": "data\/booster_evolucoes_prismaticas.png",
+        "descricao": "Pacote individual (booster) da expansão Estampas Ilustradas: Evoluções Prismáticas. Contém 6 cartas de jogo adicionais, com destaque para Eevee e suas evoluções em artes exclusivas."
+    },
+    {
+        "id": 7,
+        "nome": "Caixa de Boosters Pokémon - Megaevolução: Escuridão Absoluta",
+        "preco": 359.9,
+        "categoria": "Caixas de Boosters",
+        "imagem": "data\/caixa_escuridao_absoluta.png",
+        "descricao": "Box Display com 36 pacotes de booster da expansão Megaevolução — Escuridão Absoluta. Produto em Português, lacrado, com destaque para Mega Darkrai ex e Mega Zeraora ex."
+    },
+    {
+        "id": 8,
+        "nome": "Caixa de Boosters Pokémon - Megaevolução: Caos Ascendente",
+        "preco": 399.9,
+        "categoria": "Caixas de Boosters",
+        "imagem": "data\/caixa_caos_ascendente.png",
+        "descricao": "Box Display com 36 pacotes de booster da expansão Megaevolução — Caos Ascendente. Produto em Português, lacrado, com destaque para Mega Greninja ex e outros Pokémon Mega Evoluídos."
+    },
+    {
+        "id": 9,
+        "nome": "Caixa de Boosters Pokémon - Megaevolução: Fogo Fantasmagórico",
+        "preco": 349.9,
+        "categoria": "Caixas de Boosters",
+        "imagem": "data\/caixa_fogo_fantasmagorico.png",
+        "descricao": "Box Display com 36 pacotes de booster da expansão Megaevolução — Fogo Fantasmagórico. Produto em Português, lacrado, com destaque para Mega Charizard X ex e Mega Gengar ex."
+    }
+]

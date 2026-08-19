@@ -1,0 +1,24 @@
+[
+    {
+        "nome": "fasfdafsda",
+        "cnpj": "fasdfas",
+        "telefone": "fasdf",
+        "rua": "fasdfsad",
+        "numero": "fasdf",
+        "bairro": "fasdf",
+        "cidade": "asdfasdfdsfasdfasdf",
+        "estado": "fa",
+        "id": 1
+    },
+    {
+        "nome": "dDA",
+        "cnpj": "123214",
+        "telefone": "1242421424",
+        "rua": "rfd",
+        "numero": "321",
+        "bairro": "sadfda",
+        "cidade": "gasv",
+        "estado": "fs",
+        "id": 2
+    }
+]
