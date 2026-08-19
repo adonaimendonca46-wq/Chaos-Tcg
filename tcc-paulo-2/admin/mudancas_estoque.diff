@@ -1,0 +1,141 @@
+diff --git a/tcc-paulo-2/includes/banco_ficticio.php b/tcc-paulo-2/includes/banco_ficticio.php
+index 4455455..c95b155 100644
+--- a/tcc-paulo-2/includes/banco_ficticio.php
++++ b/tcc-paulo-2/includes/banco_ficticio.php
+@@ -43,11 +43,11 @@ function salvarProdutosJson($produtos) {
+ }
+ 
+ /**
+- * Diminui em 1 o estoque de um produto (chamada quando ele é adicionado ao carrinho
+- * pelo site). Retorna true se conseguiu dar baixa, false se o produto não existe
+- * ou já está sem estoque disponível.
++ * Diminui o estoque de um produto na quantidade informada (chamada quando o
++ * cliente CONFIRMA o pedido em pages/finalizar.php). Retorna true se conseguiu
++ * dar baixa, false se o produto não existe ou não há unidades suficientes.
+  */
+-function darBaixaEstoque($id) {
++function darBaixaEstoque($id, $quantidade = 1) {
+     $produtos = lerBancoJson();
+     $deu_baixa = false;
+ 
+@@ -55,8 +55,8 @@ function darBaixaEstoque($id) {
+         if ((int) $p['id'] === (int) $id) {
+             $estoque_atual = (int) ($p['estoque'] ?? 0);
+ 
+-            if ($estoque_atual > 0) {
+-                $produtos[$indice]['estoque'] = $estoque_atual - 1;
++            if ($estoque_atual >= $quantidade) {
++                $produtos[$indice]['estoque'] = $estoque_atual - $quantidade;
+                 $deu_baixa = true;
+             }
+             break;
+@@ -70,6 +70,20 @@ function darBaixaEstoque($id) {
+     return $deu_baixa;
+ }
+ 
++/**
++ * Verifica (sem alterar nada) se há estoque suficiente de um produto para a
++ * quantidade informada. Usada em finalizar.php para checar todo o carrinho
++ * antes de confirmar o pedido e dar baixa no estoque.
++ */
++function verificarEstoqueDisponivel($id, $quantidade = 1) {
++    $produto = buscarProdutoPorId($id);
++    if (!$produto) {
++        return false;
++    }
++    $estoque_atual = (int) ($produto['estoque'] ?? 0);
++    return $estoque_atual >= $quantidade;
++}
++
+ // FUNÇÕES PARA GERENCIAMENTO DE USUÁRIOS
+ //=============================================
+ function listarUsuarios(){
+diff --git a/tcc-paulo-2/pages/finalizar.php b/tcc-paulo-2/pages/finalizar.php
+index f4c47c1..9e858cf 100644
+--- a/tcc-paulo-2/pages/finalizar.php
++++ b/tcc-paulo-2/pages/finalizar.php
+@@ -99,17 +99,44 @@
+         ? 'index.php?pg=finalizar'
+         : 'index.php?pg=finalizar&id=' . $produto['id'];
+ 
+-    // Simulação de processamento do "pedido" quando o form é enviado (POST)
++    // Processamento do pedido quando o form é enviado (POST) — é aqui,
++    // ao clicar em "Confirmar Pedido", que o estoque é efetivamente baixado.
+     $pedido_enviado = false;
++    $erro_estoque = null;
+     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+         // Aqui, futuramente, entraria a lógica real de salvar o pedido no banco.
+         // Por enquanto é apenas uma simulação para fins de TCC.
+         $nome_cliente = htmlspecialchars($_POST['nome'] ?? '');
+-        $pedido_enviado = true;
+ 
+-        // Se veio do carrinho, o pedido foi "fechado": esvaziamos o carrinho da sessão
+         if ($modo_carrinho) {
+-            $_SESSION['carrinho'] = [];
++            // 1º passo: confere se AINDA há estoque suficiente de cada item
++            // (pode ter mudado entre o cliente montar o carrinho e confirmar).
++            $estoque_ok = true;
++            foreach ($itens_carrinho as $item) {
++                if (!verificarEstoqueDisponivel($item['produto']['id'], $item['quantidade'])) {
++                    $estoque_ok = false;
++                    $erro_estoque = 'Estoque insuficiente para "' . $item['produto']['nome'] . '". Remova ou ajuste a quantidade e tente novamente.';
++                    break;
++                }
++            }
++
++            // 2º passo: só dá baixa se TODOS os itens tiverem estoque (evita
++            // baixar parte do pedido e falhar no meio do caminho)
++            if ($estoque_ok) {
++                foreach ($itens_carrinho as $item) {
++                    darBaixaEstoque($item['produto']['id'], $item['quantidade']);
++                }
++                $pedido_enviado = true;
++                $_SESSION['carrinho'] = []; // pedido fechado: esvazia o carrinho
++            }
++        } else {
++            // Modo "Comprar Agora": sempre 1 unidade do produto
++            if (verificarEstoqueDisponivel($produto['id'], 1)) {
++                darBaixaEstoque($produto['id'], 1);
++                $pedido_enviado = true;
++            } else {
++                $erro_estoque = 'Esse produto acabou de ficar sem estoque disponível.';
++            }
+         }
+     }
+ ?>
+@@ -150,6 +177,13 @@
+ 
+ <?php else: ?>
+ 
++    <?php if ($erro_estoque): ?>
++        <div class="max-w-3xl mx-auto mb-8 bg-red-950/40 border border-red-800 rounded-lg px-6 py-4 flex items-center gap-3">
++            <i class="ph-fill ph-warning-circle text-red-500 text-2xl shrink-0"></i>
++            <p class="text-red-300 text-sm font-bold"><?php echo htmlspecialchars($erro_estoque); ?></p>
++        </div>
++    <?php endif; ?>
++
+     <div class="flex flex-col lg:flex-row gap-10">
+ 
+         <!-- Resumo da Compra -->
+diff --git a/tcc-paulo-2/pages/produtos.php b/tcc-paulo-2/pages/produtos.php
+index e137071..c8226f5 100644
+--- a/tcc-paulo-2/pages/produtos.php
++++ b/tcc-paulo-2/pages/produtos.php
+@@ -49,11 +49,13 @@
+ 
+         if ($produto_valido) {
+             $estoque_disponivel = (int) ($produto_valido['estoque'] ?? 0);
++            $qtd_ja_no_carrinho = (int) ($_SESSION['carrinho'][$id_para_adicionar] ?? 0);
+ 
+-            // darBaixaEstoque() só desconta e retorna true se ainda houver unidade
+-            // disponível; assim evitamos adicionar ao carrinho um item esgotado
+-            // mesmo que o link tenha sido acessado direto pela URL.
+-            if ($estoque_disponivel > 0 && darBaixaEstoque($id_para_adicionar)) {
++            // O estoque só é baixado de verdade quando o pedido é CONFIRMADO
++            // (em pages/finalizar.php). Aqui só verificamos se ainda há unidade
++            // livre, descontando o que o cliente já colocou no carrinho, para
++            // não deixar reservar mais do que existe fisicamente.
++            if ($estoque_disponivel > $qtd_ja_no_carrinho) {
+                 if (!isset($_SESSION['carrinho'][$id_para_adicionar])) {
+                     $_SESSION['carrinho'][$id_para_adicionar] = 0;
+                 }

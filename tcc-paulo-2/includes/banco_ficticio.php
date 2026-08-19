@@ -43,11 +43,11 @@ function salvarProdutosJson($produtos) {
 }
 
 /**
- * Diminui em 1 o estoque de um produto (chamada quando ele é adicionado ao carrinho
- * pelo site). Retorna true se conseguiu dar baixa, false se o produto não existe
- * ou já está sem estoque disponível.
+ * Diminui o estoque de um produto na quantidade informada (chamada quando o
+ * cliente CONFIRMA o pedido em pages/finalizar.php). Retorna true se conseguiu
+ * dar baixa, false se o produto não existe ou não há unidades suficientes.
  */
-function darBaixaEstoque($id) {
+function darBaixaEstoque($id, $quantidade = 1) {
     $produtos = lerBancoJson();
     $deu_baixa = false;
 
@@ -55,8 +55,8 @@ function darBaixaEstoque($id) {
         if ((int) $p['id'] === (int) $id) {
             $estoque_atual = (int) ($p['estoque'] ?? 0);
 
-            if ($estoque_atual > 0) {
-                $produtos[$indice]['estoque'] = $estoque_atual - 1;
+            if ($estoque_atual >= $quantidade) {
+                $produtos[$indice]['estoque'] = $estoque_atual - $quantidade;
                 $deu_baixa = true;
             }
             break;
@@ -68,6 +68,20 @@ function darBaixaEstoque($id) {
     }
 
     return $deu_baixa;
+}
+
+/**
+ * Verifica (sem alterar nada) se há estoque suficiente de um produto para a
+ * quantidade informada. Usada em finalizar.php para checar todo o carrinho
+ * antes de confirmar o pedido e dar baixa no estoque.
+ */
+function verificarEstoqueDisponivel($id, $quantidade = 1) {
+    $produto = buscarProdutoPorId($id);
+    if (!$produto) {
+        return false;
+    }
+    $estoque_atual = (int) ($produto['estoque'] ?? 0);
+    return $estoque_atual >= $quantidade;
 }
 
 // FUNÇÕES PARA GERENCIAMENTO DE USUÁRIOS

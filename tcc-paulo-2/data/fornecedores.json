@@ -20,5 +20,16 @@
         "cidade": "gasv",
         "estado": "fs",
         "id": 2
+    },
+    {
+        "nome": "charles",
+        "cnpj": "22222",
+        "telefone": "67676767676767",
+        "rua": "2 mais 2",
+        "numero": "2mais2",
+        "bairro": "charles",
+        "cidade": "rio",
+        "estado": "rj",
+        "id": 3
     }
 ]

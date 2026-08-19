@@ -49,11 +49,13 @@
 
         if ($produto_valido) {
             $estoque_disponivel = (int) ($produto_valido['estoque'] ?? 0);
+            $qtd_ja_no_carrinho = (int) ($_SESSION['carrinho'][$id_para_adicionar] ?? 0);
 
-            // darBaixaEstoque() só desconta e retorna true se ainda houver unidade
-            // disponível; assim evitamos adicionar ao carrinho um item esgotado
-            // mesmo que o link tenha sido acessado direto pela URL.
-            if ($estoque_disponivel > 0 && darBaixaEstoque($id_para_adicionar)) {
+            // O estoque só é baixado de verdade quando o pedido é CONFIRMADO
+            // (em pages/finalizar.php). Aqui só verificamos se ainda há unidade
+            // livre, descontando o que o cliente já colocou no carrinho, para
+            // não deixar reservar mais do que existe fisicamente.
+            if ($estoque_disponivel > $qtd_ja_no_carrinho) {
                 if (!isset($_SESSION['carrinho'][$id_para_adicionar])) {
                     $_SESSION['carrinho'][$id_para_adicionar] = 0;
                 }

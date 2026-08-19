@@ -99,17 +99,44 @@
         ? 'index.php?pg=finalizar'
         : 'index.php?pg=finalizar&id=' . $produto['id'];
 
-    // Simulação de processamento do "pedido" quando o form é enviado (POST)
+    // Processamento do pedido quando o form é enviado (POST) — é aqui,
+    // ao clicar em "Confirmar Pedido", que o estoque é efetivamente baixado.
     $pedido_enviado = false;
+    $erro_estoque = null;
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Aqui, futuramente, entraria a lógica real de salvar o pedido no banco.
         // Por enquanto é apenas uma simulação para fins de TCC.
         $nome_cliente = htmlspecialchars($_POST['nome'] ?? '');
-        $pedido_enviado = true;
 
-        // Se veio do carrinho, o pedido foi "fechado": esvaziamos o carrinho da sessão
         if ($modo_carrinho) {
-            $_SESSION['carrinho'] = [];
+            // 1º passo: confere se AINDA há estoque suficiente de cada item
+            // (pode ter mudado entre o cliente montar o carrinho e confirmar).
+            $estoque_ok = true;
+            foreach ($itens_carrinho as $item) {
+                if (!verificarEstoqueDisponivel($item['produto']['id'], $item['quantidade'])) {
+                    $estoque_ok = false;
+                    $erro_estoque = 'Estoque insuficiente para "' . $item['produto']['nome'] . '". Remova ou ajuste a quantidade e tente novamente.';
+                    break;
+                }
+            }
+
+            // 2º passo: só dá baixa se TODOS os itens tiverem estoque (evita
+            // baixar parte do pedido e falhar no meio do caminho)
+            if ($estoque_ok) {
+                foreach ($itens_carrinho as $item) {
+                    darBaixaEstoque($item['produto']['id'], $item['quantidade']);
+                }
+                $pedido_enviado = true;
+                $_SESSION['carrinho'] = []; // pedido fechado: esvazia o carrinho
+            }
+        } else {
+            // Modo "Comprar Agora": sempre 1 unidade do produto
+            if (verificarEstoqueDisponivel($produto['id'], 1)) {
+                darBaixaEstoque($produto['id'], 1);
+                $pedido_enviado = true;
+            } else {
+                $erro_estoque = 'Esse produto acabou de ficar sem estoque disponível.';
+            }
         }
     }
 ?>
@@ -149,6 +176,13 @@
     </div>
 
 <?php else: ?>
+
+    <?php if ($erro_estoque): ?>
+        <div class="max-w-3xl mx-auto mb-8 bg-red-950/40 border border-red-800 rounded-lg px-6 py-4 flex items-center gap-3">
+            <i class="ph-fill ph-warning-circle text-red-500 text-2xl shrink-0"></i>
+            <p class="text-red-300 text-sm font-bold"><?php echo htmlspecialchars($erro_estoque); ?></p>
+        </div>
+    <?php endif; ?>
 
     <div class="flex flex-col lg:flex-row gap-10">
 
